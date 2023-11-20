@@ -42,3 +42,14 @@ jobs:
           docker push nitinprajapati333/netflix:latest  
         env:
           DOCKER_CLI_ACI: 1
+
+  deploy:    
+    needs: build-analyze-scan  
+    runs-on: [gcp-netflix]  #use your label here
+    steps:
+      - name: Pull the docker image
+        run: docker pull nitinprajapati333/netflix:latest
+      - name: Trivy image scan
+        run: trivy image nitinprajapati333/netflix:latest
+      - name: Run the container netflix
+        run: docker run -d --name netflix -p 8081:80 nitinprajapati333/netflix:latest
